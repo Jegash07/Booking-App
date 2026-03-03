@@ -38,7 +38,7 @@ router.post('/', upload.single('image'), (req, res) => {
         // Generate native URL for the local hosted file
         res.json({
             message: 'Image Uploaded successfully!',
-            imageUrl: `http://localhost:5000/uploads/${req.file.filename}`,
+            imageUrl: `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`,
         });
     } else {
         res.status(400).json({ message: 'No image uploaded natively' });

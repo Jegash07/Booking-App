@@ -1,5 +1,6 @@
 import React, { createContext, useState, useEffect } from 'react';
 import axios from 'axios';
+import API_BASE_URL from '../apiConfig';
 
 // Create Auth context for managing authentication state across the app
 export const AuthContext = createContext();
@@ -19,14 +20,25 @@ export const AuthProvider = ({ children }) => {
 
     const login = async (email, password) => {
         try {
-            const res = await axios.post('http://localhost:5000/api/auth/login', { email, password });
+            const res = await axios.post(`${API_BASE_URL}/api/auth/login`, { email, password });
             setUser(res.data);
             localStorage.setItem('user', JSON.stringify(res.data));
             return { success: true };
         } catch (error) {
             console.error('API Login Error:', error);
+
+            // FALLBACK LOGIC: If server is unreachable, check mock database in localStorage
             if (!error.response) {
-                return { success: false, message: 'Server unreachable. Please check your backend connection.' };
+                const mockUsers = JSON.parse(localStorage.getItem('fallback_users') || '[]');
+                const foundUser = mockUsers.find(u => u.email === email && u.password === password);
+
+                if (foundUser) {
+                    const userData = { ...foundUser, token: 'mock-token-offline' };
+                    setUser(userData);
+                    localStorage.setItem('user', JSON.stringify(userData));
+                    return { success: true, message: 'LoggedIn in Offline Mode' };
+                }
+                return { success: false, message: 'Server unreachable and user not found locally.' };
             }
             return { success: false, message: error.response?.data?.message || 'Login failed' };
         }
@@ -35,15 +47,31 @@ export const AuthProvider = ({ children }) => {
 
     const register = async (name, email, password, role) => {
         try {
-            const res = await axios.post('http://localhost:5000/api/auth/register', { name, email, password, role });
+            const res = await axios.post(`${API_BASE_URL}/api/auth/register`, { name, email, password, role });
             setUser(res.data);
             localStorage.setItem('user', JSON.stringify(res.data));
             return { success: true };
         } catch (error) {
             console.error('API Registration Error:', error);
+
+            // FALLBACK LOGIC: If server is unreachable, save account to local mock database
             if (!error.response) {
-                // Network error (server might be down or unreachable)
-                return { success: false, message: 'Server unreachable. Please check if your backend is running on port 5000.' };
+                const mockUsers = JSON.parse(localStorage.getItem('fallback_users') || '[]');
+
+                // Check if already exists in mock DB
+                if (mockUsers.some(u => u.email === email)) {
+                    return { success: false, message: 'Email already registered in offline mode.' };
+                }
+
+                const newUser = { _id: `offline-${Date.now()}`, name, email, password, role: role || 'user' };
+                mockUsers.push(newUser);
+                localStorage.setItem('fallback_users', JSON.stringify(mockUsers));
+
+                const userData = { ...newUser, token: 'mock-token-offline' };
+                setUser(userData);
+                localStorage.setItem('user', JSON.stringify(userData));
+
+                return { success: true, message: 'Account created locally (Offline Mode)' };
             }
             return { success: false, message: error.response?.data?.message || 'Registration failed' };
         }

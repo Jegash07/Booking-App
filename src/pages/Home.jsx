@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Spinner, Form } from 'react-bootstrap';
 import axios from 'axios';
+import API_BASE_URL from '../apiConfig';
 import MovieCard from '../components/MovieCard';
 import HeroSection from '../components/HeroSection';
 import SearchBar from '../components/SearchBar';
@@ -142,7 +143,7 @@ const Home = () => {
         try {
             setLoading(true);
             // STEP 1: Attempt to query the backend database for movies with the current search keyword
-            const url = `http://localhost:5000/api/movies?keyword=${keyword}`;
+            const url = `${API_BASE_URL}/api/movies?keyword=${keyword}`;
             const res = await axios.get(url);
 
             // STEP 2: Check if the server actually returned any movies data

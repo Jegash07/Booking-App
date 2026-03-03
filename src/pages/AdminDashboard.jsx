@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Container, Row, Col, Card, Form, Button, Alert, Tab, Nav } from 'react-bootstrap';
 import axios from 'axios';
+import API_BASE_URL from '../apiConfig';
 import { AuthContext } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
@@ -39,7 +40,7 @@ const AdminDashboard = () => {
     useEffect(() => {
         const fetchMovies = async () => {
             try {
-                const res = await axios.get('http://localhost:5000/api/movies');
+                const res = await axios.get(`${API_BASE_URL}/api/movies`);
                 setMovies(res.data);
             } catch (err) {
                 console.error('Error fetching movies', err);
@@ -52,13 +53,13 @@ const AdminDashboard = () => {
         e.preventDefault();
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            await axios.post('http://localhost:5000/api/movies', {
+            await axios.post(`${API_BASE_URL}/api/movies`, {
                 title, description, genre, language, duration, releaseDate, posterUrl
             }, config);
             setMessage('Movie Created Successfully!');
             setTitle(''); setDescription(''); setGenre(''); setLanguage(''); setDuration(''); setReleaseDate(''); setPosterUrl('');
             // Reload movies list mapping visually generically
-            const res = await axios.get('http://localhost:5000/api/movies');
+            const res = await axios.get(`${API_BASE_URL}/api/movies`);
             setMovies(res.data);
         } catch (err) {
             setMessage(err.response?.data?.message || 'Error creating movie');
@@ -69,7 +70,7 @@ const AdminDashboard = () => {
         e.preventDefault();
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            await axios.post('http://localhost:5000/api/showtimes', {
+            await axios.post(`${API_BASE_URL}/api/showtimes`, {
                 movie: selectedMovie, date, time, venue, price, totalSeats
             }, config);
             setMessage('Showtime Generated Successfully!');
@@ -162,7 +163,7 @@ const AdminDashboard = () => {
 
                                                         try {
                                                             const config = { headers: { 'Content-Type': 'multipart/form-data', Authorization: `Bearer ${user.token}` } };
-                                                            const { data } = await axios.post('http://localhost:5000/api/upload', formData, config);
+                                                            const { data } = await axios.post(`${API_BASE_URL}/api/upload`, formData, config);
                                                             setPosterUrl(data.imageUrl);
                                                             setMessage('Image staged successfully. Save to publish.');
                                                         } catch (error) {

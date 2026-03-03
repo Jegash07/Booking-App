@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Container, Row, Col, Spinner, Badge, Button } from 'react-bootstrap';
 import axios from 'axios';
+import API_BASE_URL from '../apiConfig';
 import { BiTimeFive, BiCalendarEvent, BiMap } from 'react-icons/bi';
 import { AuthContext } from '../context/AuthContext';
 import { fallbackMovies, generateFallbackShowtimes } from './Home';
@@ -36,10 +37,10 @@ const MovieDetails = () => {
                     }
                 }
 
-                const movieRes = await axios.get(`http://localhost:5000/api/movies/${id}`);
+                const movieRes = await axios.get(`${API_BASE_URL}/api/movies/${id}`);
                 setMovie(movieRes.data);
 
-                const showtimesRes = await axios.get(`http://localhost:5000/api/showtimes/movie/${id}`);
+                const showtimesRes = await axios.get(`${API_BASE_URL}/api/showtimes/movie/${id}`);
                 setShowtimes(showtimesRes.data);
                 setLoading(false);
             } catch (error) {

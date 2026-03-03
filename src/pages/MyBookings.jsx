@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Container, Row, Col, Card, Badge, Spinner } from 'react-bootstrap';
 import axios from 'axios';
+import API_BASE_URL from '../apiConfig';
 import { AuthContext } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
@@ -21,11 +22,15 @@ const MyBookings = () => {
                 const config = {
                     headers: { Authorization: `Bearer ${user.token}` }
                 };
-                const res = await axios.get('http://localhost:5000/api/bookings/mybookings', config);
-                setBookings(res.data);
+                const res = await axios.get(`${API_BASE_URL}/api/bookings/mybookings`, config);
+                const realBookings = res.data;
+                const fallbackBookings = JSON.parse(localStorage.getItem('fallback_bookings') || '[]').filter(b => b.userId === user._id);
+                setBookings([...realBookings, ...fallbackBookings]);
                 setLoading(false);
             } catch (error) {
-                console.error('Error fetching generic bookings mapping', error);
+                console.error('Error fetching real bookings, showing offline data', error);
+                const fallbackBookings = JSON.parse(localStorage.getItem('fallback_bookings') || '[]').filter(b => b.userId === user._id);
+                setBookings(fallbackBookings);
                 setLoading(false);
             }
         };
