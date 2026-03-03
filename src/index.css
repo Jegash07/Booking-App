@@ -19,6 +19,8 @@
 
 html {
   scroll-behavior: smooth;
+  font-size: 16px;
+  /* Base for rem units */
 }
 
 body {
@@ -103,6 +105,7 @@ a {
   position: relative;
   z-index: 2;
   animation: fadeInDown 1.5s ease-out;
+  padding: 0 1rem;
 }
 
 .hero-content h1 {
@@ -408,4 +411,107 @@ hr {
   font-family: 'Inter', sans-serif;
   letter-spacing: 1px;
   padding: 0.6rem 1rem !important;
+}
+
+/* --- Responsive Media Queries --- */
+
+@media (max-width: 991.98px) {
+  .custom-navbar {
+    padding: 0.8rem 1rem;
+  }
+
+  .custom-navbar .navbar-brand {
+    font-size: 1.5rem;
+  }
+
+  /* Dropdown links adaptation */
+  .navbar-collapse {
+    background-color: var(--card-bg);
+    padding: 1rem;
+    border-radius: 0 0 12px 12px;
+    border-top: 1px solid var(--border-color);
+    margin-top: 0.5rem;
+  }
+
+  .navbar-collapse .nav-link {
+    padding: 0.8rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    margin-left: 0 !important;
+  }
+
+  .navbar-collapse .btn-primary-custom {
+    margin-left: 0 !important;
+    margin-top: 1rem;
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-section {
+    height: 50vh;
+  }
+
+  .hero-content h1 {
+    font-size: 2.22rem;
+  }
+
+  .hero-content p {
+    font-size: 0.9rem;
+  }
+
+  .movie-poster {
+    height: 380px;
+  }
+
+  .movie-title {
+    font-size: 1.2rem;
+  }
+
+  /* Form containers adaptation */
+  .bg-dark.p-5 {
+    padding: 2.5rem 1.5rem !important;
+    margin: 0 10px;
+  }
+
+  .cinema-screen {
+    height: 80px;
+    font-size: 0.8rem;
+    letter-spacing: 3px;
+  }
+
+  .seats-container {
+    overflow-x: auto;
+    width: 100%;
+    padding: 15px;
+    justify-content: flex-start;
+  }
+
+  .seat {
+    width: 32px;
+    height: 32px;
+    font-size: 0.75rem;
+  }
+
+  .seat-row {
+    gap: 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-section {
+    height: 45vh;
+  }
+
+  .hero-content h1 {
+    font-size: 1.8rem;
+  }
+
+  .movie-poster {
+    height: 320px;
+  }
+
+  .custom-navbar .navbar-brand {
+    font-size: 1.2rem;
+    letter-spacing: 1px;
+  }
 }
