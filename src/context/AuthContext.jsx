@@ -54,11 +54,17 @@ export const AuthProvider = ({ children }) => {
         } catch (error) {
             console.error('API Registration Error:', error);
 
-            // FALLBACK LOGIC: If server is unreachable, save account to local mock database
+            // Detailed Connectivity error handling
             if (!error.response) {
+                // If it's a network error (no response)
+                const isLocalhost = API_BASE_URL.includes('localhost');
+                const errorMessage = isLocalhost
+                    ? 'Server unreachable. If you are on mobile, use your laptop IP instead of localhost.'
+                    : 'Server unreachable. Please check your internet connection or backend status.';
+
+                // FALLBACK LOGIC: Save account to local mock database for demo purposes
                 const mockUsers = JSON.parse(localStorage.getItem('fallback_users') || '[]');
 
-                // Check if already exists in mock DB
                 if (mockUsers.some(u => u.email === email)) {
                     return { success: false, message: 'Email already registered in offline mode.' };
                 }
@@ -71,7 +77,7 @@ export const AuthProvider = ({ children }) => {
                 setUser(userData);
                 localStorage.setItem('user', JSON.stringify(userData));
 
-                return { success: true, message: 'Account created locally (Offline Mode)' };
+                return { success: true, message: `Offline Mode: ${errorMessage}` };
             }
             return { success: false, message: error.response?.data?.message || 'Registration failed' };
         }

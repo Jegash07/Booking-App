@@ -2,6 +2,7 @@ import React, { useState, useContext } from 'react';
 import { Container, Row, Col, Form, Button, Alert } from 'react-bootstrap';
 import { AuthContext } from '../context/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
+import API_BASE_URL from '../apiConfig';
 
 // Register Form to submit user details and sign up
 const Register = () => {
@@ -10,6 +11,7 @@ const Register = () => {
     const [password, setPassword] = useState('');
     const [role, setRole] = useState('user');
     const [error, setError] = useState('');
+    const [successMessage, setSuccessMessage] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const { register } = useContext(AuthContext);
@@ -18,11 +20,18 @@ const Register = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
+        setSuccessMessage('');
         setIsSubmitting(true);
         try {
             const result = await register(name, email, password, role);
             if (result.success) {
-                navigate('/');
+                if (result.message) {
+                    setSuccessMessage(result.message);
+                    // Stay on page for a moment to show the message if it's offline mode
+                    setTimeout(() => navigate('/'), 3000);
+                } else {
+                    navigate('/');
+                }
             } else {
                 setError(result.message);
             }
@@ -38,17 +47,23 @@ const Register = () => {
         <Container className="mt-4 mt-md-5 pt-3 pt-md-5">
             <Row className="justify-content-center">
                 <Col xs={11} sm={9} md={7} lg={5}>
-                    <div className="bg-dark p-4 p-md-5 rounded-4 shadow-lg border border-secondary">
-                        <h2 className="text-center mb-4">Create Account</h2>
-                        {error && <Alert variant="danger" className="py-2 small">{error}</Alert>}
+                    <div className="bg-dark p-4 p-md-5 rounded-4 shadow-lg border border-secondary position-relative overflow-hidden">
+                        {/* Premium Gradient Background Effect */}
+                        <div className="position-absolute top-0 start-0 w-100 h-100 opacity-10"
+                            style={{ background: 'radial-gradient(circle at top right, #d4af37, transparent)' }}></div>
 
-                        <Form onSubmit={handleSubmit}>
+                        <h2 className="text-center mb-4 position-relative">Create Account</h2>
+
+                        {error && <Alert variant="danger" className="py-2 small border-0 shadow-sm">{error}</Alert>}
+                        {successMessage && <Alert variant="warning" className="py-2 small border-0 shadow-sm">{successMessage}</Alert>}
+
+                        <Form onSubmit={handleSubmit} className="position-relative">
                             <Form.Group className="mb-3">
-                                <Form.Label className="small text-secondary">Full Name</Form.Label>
+                                <Form.Label className="small text-secondary fw-bold">FULL NAME</Form.Label>
                                 <Form.Control
                                     type="text"
                                     className="form-control-custom"
-                                    placeholder="John Doe"
+                                    placeholder="Enter your name"
                                     value={name}
                                     onChange={(e) => setName(e.target.value)}
                                     required
@@ -56,11 +71,11 @@ const Register = () => {
                             </Form.Group>
 
                             <Form.Group className="mb-3">
-                                <Form.Label className="small text-secondary">Email address</Form.Label>
+                                <Form.Label className="small text-secondary fw-bold">EMAIL ADDRESS</Form.Label>
                                 <Form.Control
                                     type="email"
                                     className="form-control-custom"
-                                    placeholder="name@example.com"
+                                    placeholder="your@email.com"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     required
@@ -68,7 +83,7 @@ const Register = () => {
                             </Form.Group>
 
                             <Form.Group className="mb-3">
-                                <Form.Label className="small text-secondary">Password</Form.Label>
+                                <Form.Label className="small text-secondary fw-bold">PASSWORD</Form.Label>
                                 <Form.Control
                                     type="password"
                                     className="form-control-custom"
@@ -80,7 +95,7 @@ const Register = () => {
                             </Form.Group>
 
                             <Form.Group className="mb-4">
-                                <Form.Label className="small text-secondary">Account Type</Form.Label>
+                                <Form.Label className="small text-secondary fw-bold">ACCOUNT TYPE</Form.Label>
                                 <Form.Select
                                     className="form-control-custom bg-dark text-white shadow-none"
                                     value={role}
@@ -94,17 +109,26 @@ const Register = () => {
                             <Button
                                 variant="danger"
                                 type="submit"
-                                className="w-100 btn-primary-custom py-2 shadow-sm"
+                                className="w-100 btn-primary-custom py-3 shadow border-0"
                                 disabled={isSubmitting}
                             >
-                                {isSubmitting ? 'Signing Up...' : 'Sign Up'}
+                                {isSubmitting ? (
+                                    <div className="d-flex align-items-center justify-content-center">
+                                        <div className="spinner-border spinner-border-sm me-2" role="status"></div>
+                                        <span>SIGNING UP...</span>
+                                    </div>
+                                ) : 'CREATE ACCOUNT'}
                             </Button>
                         </Form>
 
-                        <div className="text-center mt-4">
-                            <span className="text-muted small">Already have an account? </span>
-                            <Link to="/login" className="text-white text-decoration-none font-weight-bold small">Sign In.</Link>
+                        <div className="text-center mt-4 position-relative">
+                            <span className="text-muted small">Already part of our cinema? </span>
+                            <Link to="/login" className="text-primary-custom text-decoration-none fw-bold small">Sign In.</Link>
                         </div>
+                    </div>
+
+                    {/* Connection Helper for Mobile Testing */}
+                    <div className="text-center mt-3 text-secondary" style={{ fontSize: '0.75rem' }}>
                     </div>
                 </Col>
             </Row>
