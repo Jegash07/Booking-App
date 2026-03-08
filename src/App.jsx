@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import NavigationBar from './components/NavigationBar';
+import ScrollToTop from './components/ScrollToTop';
 import Footer from './components/Footer';
 import Home from './pages/Home';
 import Login from './pages/Login';
@@ -14,6 +15,7 @@ import MyBookings from './pages/MyBookings';
 function App() {
   return (
     <Router>
+      <ScrollToTop />
       {/* Navigation bar stays persistent across all routes */}
       <NavigationBar />
       <div style={{ minHeight: '80vh', paddingBottom: '3rem' }}>
